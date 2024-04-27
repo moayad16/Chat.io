@@ -1,34 +1,39 @@
-import AWS from "aws-sdk";
+import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
-AWS.config.update({
-  region: process.env.NEXT_PUBLIC_AWS_REGION,
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET,
-});
-
-const s3 = new AWS.S3({
-  params: {
-    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+const s3Client = new S3Client({
+  region: process.env.NEXT_PUBLIC_AWS_REGION!,
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET!,
   },
-  region: process.env.NEXT_PUBLIC_AWS_REGION,
 });
 
 export async function uploadPdf(
   file: File
 ): Promise<{ fileName: string; fileKey: string }> {
-  const fileKey = `uploads/${Date.now().toString()}${file.name.replace(" ", "-")}`;
+  const fileKey = `uploads/${Date.now().toString()}${file.name.replace(
+    " ",
+    "-"
+  )}`;
   const params = {
-    Bucket: process.env.AWS_BUCKET_NAME!,
+    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
     Key: fileKey,
     Body: file,
   };
 
-  const upload = s3
-    .putObject(params)
-    .on("httpUploadProgress", (progress) => {
-      console.log(progress);
-    })
-    .promise();
+  const command  = new PutObjectCommand(params);
+
+  // const upload = s3Client.
+  //   .putObject(params)
+  //   .on("httpUploadProgress", (progress) => {
+  //     console.log(progress);
+  //   })
+  //   .promise();
+
+  console.log("uploading to s3");
+  
+
+  const upload = s3Client.send(command);
 
   await upload.then((data) => {
     console.log("Uploaded pdf to s3 bucket");

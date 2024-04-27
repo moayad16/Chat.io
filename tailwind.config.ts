@@ -10,7 +10,11 @@ const config: Config = {
     extend: {
       colors: {
         "custom-blue": "#131B2E",
-        "slate": "#21293B",
+        slate: "#21293B",
+        "sideBar-bg": "#0C1426",
+        "li-bg": "#0171FF",
+        "side-text": "#204E6F",
+        "chat-bg": "#010515",
       },
       spacing: {
         "60px": "60px",

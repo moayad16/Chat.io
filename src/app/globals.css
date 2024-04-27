@@ -13,3 +13,20 @@ body {
     text-wrap: balance;
   }
 }
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: yellow !important;
+  width: 25px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1F2A48;
+  border-radius: 10px;
+}
