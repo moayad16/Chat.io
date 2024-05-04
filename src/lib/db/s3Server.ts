@@ -1,4 +1,4 @@
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -41,5 +41,20 @@ export async function getPreSignedUrl(fileKey: string) {
   } catch (error) {
     console.log(error);
     throw new Error("Error getting pre-signed URL");
+  }
+}
+
+export async function deletePdfFromS3(fileKey: string) {
+  const params = {
+    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
+    Key: fileKey,
+  };
+
+  try {
+    await s3Client.send(new DeleteObjectCommand(params));
+    return Promise.resolve();
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error deleting pdf from s3");
   }
 }

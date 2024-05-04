@@ -31,7 +31,7 @@ export const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_KEY!,
 });
 
-export async function getPinecon() {
+export function getPinecone() {
   return pinecone;
 }
 

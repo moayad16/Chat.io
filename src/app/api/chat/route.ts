@@ -5,6 +5,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleGenerativeAIStream, Message, StreamingTextResponse } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 import { runtime } from "./config";
+import { db } from "@/lib/db";
+import { messages as _messages } from "@/lib/db/schema";
 
 const model = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
@@ -24,7 +26,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     console.log("this is endpoint is running on the main server");
   }
 
-  const { messages, fileKey } = await req.json();
+  const { messages, fileKey, chatId } = await req.json();
   const lastMessage = messages[messages.length - 1];
   const context = await getContext(lastMessage.content, fileKey);
   const prompt = {
@@ -49,27 +51,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     `,
       },
     ],
-    // content: `
-    // This paragraph is a prompt for the AI model to generate a response to the user.
-    // This AI model should act as a human-like assistant that can provide helpful, clever, and articulate responses to the user.
-    // The AI model should be able to provide vivid and thoughtful responses to the user.
-    // The AI model is always friendly, helpfull, inspiring and well mannered individual.
-    // The AI model should take into consideration the context block provided as a knowledge background from which questions will be answered.
-    // The AI model should not invent anything that is not drawn directly from the context block if the context block is provided.
-    // If the context block is not provided or Empty, the AI model should provide the answer to question to the best of its knowledge.
-    // If the context block is provided, the AI model should draw the answer to the question from the context block and only provide information that is directly related to the context block.
-    // The context block is a part of an pdf document that the user has previously uploaded.
-    // START CONTEXT BLOCK
-    // ${context}
-    // END OF CONTEXT BLOCK
-    // `
   };
 
-  console.log(buildGoogleGenAIPrompt(messages.concat(prompt)));
-  console.log(
-    "prompt: ", prompt.parts.map((part) => part.text).join("\n")
-  );
-  
   const generativeModel = model.getGenerativeModel({
     model: "gemini-1.5-pro-latest",
     systemInstruction: prompt,
@@ -78,7 +61,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const geminiStream = await generativeModel.generateContentStream(
     buildGoogleGenAIPrompt(messages)
   );
-  const stream = GoogleGenerativeAIStream(geminiStream);
+  const stream = GoogleGenerativeAIStream(geminiStream, {
+    onStart: async () => {
+      await db.insert(_messages).values({
+        chatId,
+        role: "user",
+        content: lastMessage.content,
+      })
+    },
+    onCompletion: async (completion) => {
+      await db.insert(_messages).values({
+        chatId,
+        role: "system",
+        content: completion,
+      })
+    }
+  });
 
   return new StreamingTextResponse(stream);
 }

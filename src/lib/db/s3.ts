@@ -19,16 +19,11 @@ export async function uploadPdf(
     Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
     Key: fileKey,
     Body: file,
+    ContentType: "application/pdf",
+    ContentDisposition: "inline",
   };
 
   const command  = new PutObjectCommand(params);
-
-  // const upload = s3Client.
-  //   .putObject(params)
-  //   .on("httpUploadProgress", (progress) => {
-  //     console.log(progress);
-  //   })
-  //   .promise();
 
   console.log("uploading to s3");
   

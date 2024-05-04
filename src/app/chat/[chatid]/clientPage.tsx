@@ -76,7 +76,7 @@ export default function ClientChatPage({
       <div
         className={`mx-auto lg:max-w-screen-lg lg:w-2/5 flex justify-center items-center flex-grow transition-all duration-200 flex-shring`}
       >
-        <Chat fileKey={currentChat?.fileKey || ""} />
+        <Chat fileKey={currentChat?.fileKey || ""} chatId={currentChat?.id || ""} />
       </div>
       <div
         className={`flex lg:relative lg:h-full transition-all duration-200 ${
