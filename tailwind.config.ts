@@ -8,6 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      maxWidth: {
+        "60%": "80%"
+      },
+      maxHeight: {
+        "40%": "40%"
+      },
       colors: {
         "custom-blue": "#131B2E",
         slate: "#21293B",

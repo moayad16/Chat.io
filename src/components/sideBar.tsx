@@ -20,7 +20,7 @@ export default function SideBar({ chats, chatId }: Props) {
     },[])
 
   return (
-    <div className="bg-sideBar-bg flex flex-col h-full w-full overflow-hidden rounded-xl">
+    <div className="bg-sideBar-bg flex lg:pt-0 pt-10 flex-col h-full w-full overflow-hidden lg:rounded-xl">
       <div className="p-5">
         <div className="mb-2">
           <Link

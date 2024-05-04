@@ -27,7 +27,7 @@ interface MyRecord extends PineconeRecord<MyMetadata> {
   metadata: MyMetadata;
 }
 
-const pinecone = new Pinecone({
+export const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_KEY!,
 });
 

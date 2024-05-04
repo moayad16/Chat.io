@@ -1,21 +1,19 @@
-import { getPreSignedUrl } from "@/lib/db/s3Server";
-
 type Props = {
-  fileKey: string;
+  url: string;
 };
 
-export default async function PdfViewer({ fileKey }: Props) {
-  
-  const presignerUrl = await getPreSignedUrl(fileKey)
-  const encodedUrl = encodeURIComponent(presignerUrl);  
-  
-
+export default function PdfViewer({ url }: Props) {
   return (
     <div className="bg-white w-full rounded-xl">
-      <iframe
-        src={`https://docs.google.com/gview?url=${encodedUrl}&embedded=true`}
-        className="w-full h-full rounded-xl"
-      ></iframe>
+      <object
+        style={{ backgroundColor: "white", borderRadius: "12px" }}
+        data={url}
+        type="application/pdf"
+        width="100%"
+        height="100%"
+      >
+        <embed src={url} type="application/pdf" />
+      </object>
     </div>
   );
 }

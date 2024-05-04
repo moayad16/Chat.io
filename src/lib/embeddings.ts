@@ -23,8 +23,10 @@
 //     }
 // }
 
+"use server"
+
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { GoogleGenerativeAI, TaskType } from "@google/generative-ai";
+import { TaskType } from "@google/generative-ai";
 
 const embeddings = new GoogleGenerativeAIEmbeddings({
   apiKey: process.env.GOOGLE_AI_API_KEY!,
@@ -39,7 +41,6 @@ export async function getEmbeddings(text: string) {
     
   try {
     const embedding = await embeddings.embedQuery(text);
-    console.log(embedding);
 
     return embedding;
   } catch (error) {
