@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-
 body {
   color: white;
-  background-color: #131B2E;
+  background-color: #131b2e;
 }
 
 @layer utilities {
@@ -27,6 +26,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #1F2A48;
+  background-color: #1f2a48;
   border-radius: 10px;
 }

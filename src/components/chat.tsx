@@ -1,10 +1,11 @@
-import { Send } from "lucide-react";
+import { Bot, CircleUser, Send } from "lucide-react";
 import React from "react";
 import { useChat } from "ai/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Message } from "ai";
 import toast from "react-hot-toast";
+import Markdown from "./markdown";
 
 type Props = {
   fileKey: string;
@@ -15,24 +16,29 @@ export default function Chat({ fileKey, chatId }: Props) {
   useQuery({
     queryKey: ["chat", chatId],
     queryFn: async () => {
-        await axios.get(`/api/get-messages?chatId=${chatId}`)
+      console.log("jere");
+
+      await axios
+        .get(`/api/get-messages?chatId=${chatId}`)
         .then((res) => {
           setMessages(res.data._messages);
         })
         .catch((err) => {
-          toast.error("Failed to fetch messages. Please try again later.")
+          toast.error("Failed to fetch messages. Please try again later.");
         });
-        return [];
+      return [];
     },
+    refetchOnWindowFocus: false,
   });
 
-  const { input, handleInputChange, handleSubmit, messages, setMessages } = useChat({
-    api: "/api/chat",
-    body: {
-      fileKey,
-      chatId,
-    }
-  });
+  const { input, handleInputChange, handleSubmit, messages, setMessages } =
+    useChat({
+      api: "/api/chat",
+      body: {
+        fileKey,
+        chatId,
+      },
+    });
 
   React.useEffect(() => {
     const messageContainer = document.getElementById("message-container");
@@ -53,14 +59,20 @@ export default function Chat({ fileKey, chatId }: Props) {
         {messages.map((message, index) => {
           if (message.role !== "user") {
             return (
-              <div className="bg-blue-600 h-fit lg:max-w-60% py-2 px-4 mr-auto rounded-xl mb-9 transition-all duration-200">
-                {message.content}
+              <div className="lg:max-w-60% flex items-center h-fit mb-9">
+                <Bot className="mr-2 drop-shadow-custom" />
+                <div className="bg-blue-600 shadow-md shadow-blue-700 h-fit lg:max-w-60% lg:w-fit py-2 px-4 mr-auto rounded-xl transition-all duration-200">
+                  <Markdown content={message.content} />
+                </div>
               </div>
             );
           } else {
             return (
-              <div className="bg-blue-400 lg:max-w-60% w-fit px-4 py-2 rounded-xl mb-9 ml-auto transition-all duraiton-200">
-                {message.content}
+              <div className="lg:max-w-60% mb-9 flex items-center h-fit ml-auto">
+                <div className="bg-blue-400 lg:max-w-60% w-fit px-4 py-2 shadow-md shadow-blue-500 rounded-xl ml-auto transition-all duraiton-200">
+                  {message.content}
+                </div>
+                <CircleUser className="ml-2 drop-shadow-custom bg-transparent rounded-full" />
               </div>
             );
           }

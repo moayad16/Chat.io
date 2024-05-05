@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { UserButton } from "@clerk/nextjs";
-import { MessageCircle, PlusCircle, Trash, X } from "lucide-react";
+import { MessageCircle, PlusCircle, Trash2, X } from "lucide-react";
 import { drizzleChat } from "@/lib/db/schema";
 import DeleteConfirmation from "./deleteConfirmation";
 
@@ -51,7 +51,7 @@ export default function SideBar({ chats, chatId }: Props) {
                       {chatIdToDelete === chat.id ? (
                         <X onClick={() => setChatIdToDelete(null)} />
                       ) : (
-                        <Trash onClick={() => setChatIdToDelete(chat.id)} />
+                        <Trash2 onClick={() => setChatIdToDelete(chat.id)} />
                       )}
                     </button>
                   </li>
