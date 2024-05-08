@@ -3,7 +3,7 @@ import { chats } from "@/lib/db/schema";
 import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import ClientChatPage from "./clientPage";
+import ClientChatPage from "../../../components/clientPage";
 import { checkSub } from "@/lib/subscription";
 
 type Props = {
