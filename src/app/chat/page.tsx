@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import React from "react";
-import ClientChatPage from "./[chatId]/clientPage";
+import ClientChatPage from "@/app/chat/[chatId]/clientPage"
 import { checkSub } from "@/lib/subscription";
 
 type Props = {};
