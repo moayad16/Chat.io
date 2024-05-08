@@ -13,19 +13,21 @@ type Props = {
 };
 
 export default function Chat({ fileKey, chatId }: Props) {
+  const [loading, setLoading] = React.useState(false);
+
   useQuery({
     queryKey: ["chat", chatId],
     queryFn: async () => {
-      console.log("jere");
-
-      await axios
-        .get(`/api/get-messages?chatId=${chatId}`)
-        .then((res) => {
-          setMessages(res.data._messages);
-        })
-        .catch((err) => {
-          toast.error("Failed to fetch messages. Please try again later.");
-        });
+      if (chatId)
+        await axios
+          .get(`/api/get-messages?chatId=${chatId}`)
+          .then((res) => {
+            setMessages(res.data._messages);
+          })
+          .catch((err) => {
+            toast.error("Failed to fetch messages. Please try again later.");
+          });
+      else setMessages([]);
       return [];
     },
     refetchOnWindowFocus: false,
@@ -56,27 +58,43 @@ export default function Chat({ fileKey, chatId }: Props) {
         id="message-container"
         className="h-full w-full overflow-y-auto mb-4 px-2 flex flex-col"
       >
-        {messages.map((message, index) => {
-          if (message.role !== "user") {
-            return (
-              <div className="lg:max-w-60% flex items-center h-fit mb-9">
-                <Bot className="mr-2 drop-shadow-custom" />
-                <div className="bg-blue-600 shadow-md shadow-blue-700 h-fit lg:max-w-60% lg:w-fit py-2 px-4 mr-auto rounded-xl transition-all duration-200">
-                  <Markdown content={message.content} />
+        {chatId ? (
+          messages.map((message, index) => {
+            if (message.role !== "user") {
+              return (
+                <div className="lg:max-w-60% relative flex items-center h-fit mb-9">
+                  <Bot className="mr-2 drop-shadow-custom" />
+                  <div className="bg-blue-600 shadow-md shadow-blue-700 h-fit lg:max-w-60% lg:w-fit py-2 px-4 mr-auto rounded-xl transition-all duration-200">
+                    <Markdown content={message.content} />
+                  </div>
                 </div>
-              </div>
-            );
-          } else {
-            return (
-              <div className="lg:max-w-60% mb-9 flex items-center h-fit ml-auto">
-                <div className="bg-blue-400 lg:max-w-60% w-fit px-4 py-2 shadow-md shadow-blue-500 rounded-xl ml-auto transition-all duraiton-200">
-                  {message.content}
+              );
+            } else {
+              return (
+                <div className="lg:max-w-60% mb-9 flex items-center h-fit ml-auto">
+                  <div className="bg-blue-400 lg:max-w-60% w-fit px-4 py-2 shadow-md shadow-blue-500 rounded-xl ml-auto transition-all duraiton-200">
+                    {message.content}
+                  </div>
+                  <CircleUser className="ml-2 drop-shadow-custom bg-transparent rounded-full" />
                 </div>
-                <CircleUser className="ml-2 drop-shadow-custom bg-transparent rounded-full" />
-              </div>
-            );
-          }
-        })}
+              );
+            }
+          })
+        ) : (
+          <div className="h-full flex justify-center items-center font-bold text-xl text-center">
+            Please select a chat from the side bar to start chatting
+          </div>
+        )}
+        {messages[messages.length - 1]?.role === "user" && (
+          <div className="flex items-center">
+            <Bot className="mr-2 drop-shadow-custom" />
+            <div className="bg-blue-600 shadow-md shadow-blue-700 h-fit lg:max-w-60% lg:w-fit py-2 px-4 mr-auto rounded-xl transition-all duration-200">
+              <div className="mb-2 bg-gray-300 animate-pulse w-72 h-3 rounded-full"></div>
+              <div className="mb-2 bg-gray-300 animate-pulse w-64 h-3 rounded-full"></div>
+              <div className=" bg-gray-300 animate-pulse w-80 h-3 rounded-full"></div>
+            </div>
+          </div>
+        )}
       </div>
       <div className="mt-auto w-full flex items-center bg-transparent border rounded-xl border-1 border-white px-2">
         <form className="w-full flex items-center py-3" onSubmit={handleSubmit}>
@@ -84,6 +102,7 @@ export default function Chat({ fileKey, chatId }: Props) {
             placeholder="Ask Away!"
             onChange={handleInputChange}
             value={input}
+            disabled={chatId ? false : true}
             className="w-full max-h-7 overflow-auto resize-none px-2 bg-transparent focus:outline-none"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -107,8 +126,12 @@ export default function Chat({ fileKey, chatId }: Props) {
               }px`;
             }}
           />
-          <button type="submit">
-            <Send className="cursor-pointer hover:scale-125 transition-all duration-200" />
+          <button disabled={loading || !chatId} type="submit">
+            <Send
+              className={`${
+                !(loading || !chatId) && "hover:scale-125"
+              } transition-all duration-200`}
+            />
           </button>
         </form>
       </div>

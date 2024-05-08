@@ -1,6 +1,6 @@
 "use client";
 import { drizzleChat } from "@/lib/db/schema";
-import { ArrowLeftCircle, ArrowRightCircle } from "lucide-react";
+import { ArrowLeftCircle, ArrowRightCircle, LoaderCircle } from "lucide-react";
 import SideBar from "@/components/sideBar";
 import PdfViewer from "@/components/pdfViewer";
 import Chat from "@/components/chat";
@@ -8,10 +8,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 type Props = {
-  chatId: number;
+  chatId: number | null;
   chats: drizzleChat[];
   currentChat: drizzleChat | undefined;
   userId: string;
+  isPro: boolean;
 };
 
 export default function ClientChatPage({
@@ -19,24 +20,27 @@ export default function ClientChatPage({
   chats,
   currentChat,
   userId,
+  isPro,
 }: Props) {
   const [uiState, setUiState] = useState({
     sideBarOpen: true,
     pdfViewerOpen: true,
   });
-  const [url, setUrl] = useState<string>("");
+  const [url, setUrl] = useState<string | undefined>("");
 
   useEffect(() => {
     window.innerWidth < 1024 &&
       setUiState({ ...uiState, sideBarOpen: false, pdfViewerOpen: false });
-    axios
-      .get(`/api/get-presigned-url?fileKey=${currentChat?.fileKey}`)
-      .then((res) => {
-        setUrl(res.data.encodedUrl);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (currentChat?.fileKey)
+      axios
+        .get(`/api/get-presigned-url?fileKey=${currentChat?.fileKey}`)
+        .then((res) => {
+          setUrl(res.data.encodedUrl);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    else setUrl(undefined);
   }, []);
 
   return (
@@ -48,14 +52,15 @@ export default function ClientChatPage({
             : "relative w-0 lg:w-0"
         }`}
       >
-        <SideBar chatId={chatId} chats={chats} />
+        <SideBar isPro={isPro} userId={userId} chatId={chatId} chats={chats} />
         <div
           className={`
           ${
-            (uiState.sideBarOpen &&
+            uiState.sideBarOpen &&
             typeof window !== "undefined" &&
-            window.innerWidth < 1024)?
-            "right-5 top-5" : "-right-10 -top-2"
+            window.innerWidth < 1024
+              ? "right-5 top-5"
+              : "-right-10 -top-2"
           } absolute lg:top-1/2 lg:-right-10 cursor-pointer hover:scale-125 transition-all duration-200 z-1`}
         >
           {uiState.sideBarOpen ? (
@@ -98,10 +103,11 @@ export default function ClientChatPage({
       >
         <div
           className={`${
-            (uiState.pdfViewerOpen &&
+            uiState.pdfViewerOpen &&
             typeof window !== "undefined" &&
-            window.innerWidth < 1024)?
-            "left-5 top-5 rounded-full" : "-left-10 -top-2"
+            window.innerWidth < 1024
+              ? "left-5 top-5 rounded-full"
+              : "-left-10 -top-2"
           } absolute lg:top-1/2 lg:-left-10 cursor-pointer hover:scale-125 transition-all duration-200 z-10`}
         >
           {uiState.pdfViewerOpen ? (
@@ -126,7 +132,17 @@ export default function ClientChatPage({
             />
           )}
         </div>
-        {url && <PdfViewer url={url} />}
+        {url ? (
+          <PdfViewer url={url} state={uiState.pdfViewerOpen} />
+        ) : (
+          url === ""? (
+            <div className="w-full flex justify-center items-center bg-sideBar-bg rounded-xl">
+              <LoaderCircle className="animate-spin" size={50} />
+            </div>
+          ): (
+            <PdfViewer url={undefined} state={uiState.pdfViewerOpen} />
+          )
+        )}
       </div>
     </div>
   );

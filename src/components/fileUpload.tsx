@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function FileUpload() {
   const [loading, isLoading] = React.useState(false);
+  const [state, setState] = React.useState("Uploading Your File...")
   const router = useRouter();
 
   const { mutate } = useMutation({
@@ -44,14 +45,14 @@ export default function FileUpload() {
         isLoading(false);
         return;
       } else {
-        isLoading(false);
+        setState("Creating Chat...");
         mutate(data, {
           onSuccess: ({chatId}) => {
             toast.success("Chat Created Successfully");
             router.push(`/chat/${chatId}`);
-
           },
           onError: (error) => {
+            isLoading(false);
             console.log(error);
             toast.error("Error creating chat");
           },
@@ -66,14 +67,14 @@ export default function FileUpload() {
         {loading ? (
           <div className="flex items-center justify-center flex-col">
             <Loader2 className="h-16 w-16 text-gray-300 animate-spin" />
-            <p className="mt-2 text-sm text-gray-400">Uploading Your File...</p>
+            <p className="mt-2 text-sm text-gray-400">{state}</p>
           </div>
         ) : (
           <label
             className="cursor-pointer hover:bg-gray-200 transition-all duration-200 text-gray-500 border-dashed border-2 rounded-xl flex flex-col justify-center items-center min-h-40 w-full"
             htmlFor="file"
           >
-            <Inbox className="m-0" size={90} color="gray" />
+            <Inbox className="m-0 stroke-indigo-600" size={90} />
             Drop PDF Here
           </label>
         )}

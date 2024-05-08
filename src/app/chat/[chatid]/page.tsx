@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import ClientChatPage from "./clientPage";
+import { checkSub } from "@/lib/subscription";
 
 type Props = {
   params: {
@@ -26,11 +27,16 @@ export default async function chatPage({ params: { chatId } }: Props) {
     return redirect("/");
   }
 
-  const currentChat = _chats.find((chat) => chat.id === parseInt(chatId));  
-  
-
+  const currentChat = _chats.find((chat) => chat.id === parseInt(chatId));
+  const isPro = await checkSub();
 
   return (
-    <ClientChatPage chatId={parseInt(chatId)} chats={_chats} currentChat={currentChat} userId={userId} />
+    <ClientChatPage
+      isPro={isPro}
+      chatId={parseInt(chatId)}
+      chats={_chats}
+      currentChat={currentChat}
+      userId={userId}
+    />
   );
 }

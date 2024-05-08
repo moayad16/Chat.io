@@ -4,9 +4,13 @@ import { ArrowRight } from "lucide-react";
 import { auth } from "@clerk/nextjs";
 import { LogIn, } from "lucide-react";
 import FileUpload from "@/components/fileUpload";
+import { checkSub } from "@/lib/subscription";
+import SubButton from "@/components/subButton";
 
 export default async function Home() {
   const { userId } = await auth();
+  const isPro = await checkSub();
+  
 
   return (
     <div className="cont flex flex-grow flex-col">
@@ -26,16 +30,11 @@ export default async function Home() {
             <div className="pl-8 pr-8 w-full h-fit flex flex-col items-center justify-center sm:flex-row">
               <Link
                 className="lg:mr-3 bg-white text-lg hover:bg-black hover:text-white transition-all duration-200 font-bold text-slate h-10 flex items-center xl:w-56 w-full rounded-lg mb-4 p-2 xl:justify-between justify-center"
-                href="/chats"
+                href="/chat"
               >
                 Goto Chats <ArrowRight className="ml-10" />
               </Link>
-              <Link
-                className="bg-white text-base text-slate hover:bg-black hover:text-white transition-all duration-200 font-bold h-10 flex items-center xl:w-56 w-full rounded-lg mb-4 p-2 justify-center"
-                href="/subscribe"
-              >
-                Manage Subscription
-              </Link>
+              <SubButton isPro={isPro} />
             </div>
             <FileUpload/>
           </div>
