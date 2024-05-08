@@ -10,7 +10,7 @@ import { checkSub } from "@/lib/subscription";
 
 type Props = {};
 
-export default async function ({}: Props) {
+export default async function Chats ({}: Props) {
   const { userId } = await auth();
   if (!userId) return redirect("/login");
   const _chats = await db.select().from(chats).where(eq(chats.userId, userId));

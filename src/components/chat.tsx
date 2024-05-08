@@ -62,7 +62,7 @@ export default function Chat({ fileKey, chatId }: Props) {
           messages.map((message, index) => {
             if (message.role !== "user") {
               return (
-                <div className="lg:max-w-60% relative flex items-center h-fit mb-9">
+                <div key={index} className="lg:max-w-60% relative flex items-center h-fit mb-9">
                   <Bot className="mr-2 drop-shadow-custom" />
                   <div className="bg-blue-600 shadow-md shadow-blue-700 h-fit lg:max-w-60% lg:w-fit py-2 px-4 mr-auto rounded-xl transition-all duration-200">
                     <Markdown content={message.content} />
@@ -71,7 +71,7 @@ export default function Chat({ fileKey, chatId }: Props) {
               );
             } else {
               return (
-                <div className="lg:max-w-60% mb-9 flex items-center h-fit ml-auto">
+                <div key={index} className="lg:max-w-60% mb-9 flex items-center h-fit ml-auto">
                   <div className="bg-blue-400 lg:max-w-60% w-fit px-4 py-2 shadow-md shadow-blue-500 rounded-xl ml-auto transition-all duraiton-200">
                     {message.content}
                   </div>
