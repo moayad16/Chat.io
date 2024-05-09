@@ -1,3 +1,5 @@
+"use server"
+
 import { db } from "@/lib/db";
 import { loads3IntoPinecone } from "@/lib/db/pinecone";
 import { getS3Url } from "@/lib/db/s3";
