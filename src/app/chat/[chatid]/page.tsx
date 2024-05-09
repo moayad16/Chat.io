@@ -12,8 +12,9 @@ type Props = {
   };
 };
 
-export default async function chatPage({ params: { chatId } }: Props) {
+export default async function chatPage({ params }: Props) {
   const { userId } = await auth();
+  const { chatId } = params;
   if (!userId) {
     return redirect("/sign-in");
   }
@@ -30,6 +31,7 @@ export default async function chatPage({ params: { chatId } }: Props) {
     // toast.error("You don't have access to this chat.");
     console.log("You don't have access to this chat.");
     console.log("chatId: ", chatId);
+    console.log("params", params);
     
     // return redirect("/");
   }
