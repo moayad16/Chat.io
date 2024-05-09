@@ -29,6 +29,8 @@ export default async function chatPage({ params: { chatId } }: Props) {
   if (!_chats.find((chat) => chat.id === parseInt(chatId))) {
     // toast.error("You don't have access to this chat.");
     console.log("You don't have access to this chat.");
+    console.log("chatId: ", chatId);
+    
     // return redirect("/");
   }
 
