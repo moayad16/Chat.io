@@ -9,10 +9,11 @@ import { checkSub } from "@/lib/subscription";
 type Props = {
   params: {
     chatid: string;
+    chatId: string;
   };
 };
 
-export default async function chatPage({ params: { chatid } }: Props) {
+export default async function chatPage({ params: { chatid, chatId } }: Props) {
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
@@ -23,17 +24,17 @@ export default async function chatPage({ params: { chatid } }: Props) {
     return redirect("/");
   }
 
-  if (!_chats.find((chat) => chat.id === parseInt(chatid))) {
+  if (!_chats.find((chat) => chat.id === parseInt(chatid || chatId))) {
     return redirect("/");
   }
 
-  const currentChat = _chats.find((chat) => chat.id === parseInt(chatid));
+  const currentChat = _chats.find((chat) => chat.id === parseInt(chatid || chatId));
   const isPro = await checkSub();
 
   return (
     <ClientChatPage
       isPro={isPro}
-      chatId={parseInt(chatid)}
+      chatId={parseInt(chatid || chatId)}
       chats={_chats}
       currentChat={currentChat}
       userId={userId}
