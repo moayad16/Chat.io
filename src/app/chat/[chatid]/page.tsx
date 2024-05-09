@@ -5,7 +5,6 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import ClientChatPage from "../../../components/clientPage";
 import { checkSub } from "@/lib/subscription";
-import toast from "react-hot-toast";
 
 type Props = {
   params: {
@@ -21,12 +20,15 @@ export default async function chatPage({ params: { chatId } }: Props) {
 
   const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
   if (!_chats) {
-    toast.error("Failed to fetch chats. Please try again later.");
+    // toast.error("Failed to fetch chats. Please try again later.");
+    console.log("Failed to fetch chats. Please try again later.");
+    
     // return redirect("/");
   }
 
   if (!_chats.find((chat) => chat.id === parseInt(chatId))) {
-    toast.error("You don't have access to this chat.");
+    // toast.error("You don't have access to this chat.");
+    console.log("You don't have access to this chat.");
     // return redirect("/");
   }
 
